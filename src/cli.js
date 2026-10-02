@@ -4,12 +4,13 @@ import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import { MonaPay } from '../../sdk/node/dist/index.js';
+import { withClientSecret } from './api-fetch.js';
 import { integerFlag, parseArgs, required } from './args.js';
 import { readCredentials, writeCredentials } from './credentials.js';
 import { qrPng } from './qrcode.js';
 import { listenForWebhooks } from './webhook-listener.js';
 
-const HELP = `MONA Pay CLI 0.2.0
+const HELP = `MONA Pay CLI 0.2.1
 
 Cách dùng:
   monapay login [--client-id ID] [--client-secret SECRET]
@@ -67,7 +68,7 @@ function print(value, { json, stdout }) {
   else stdout.write(`Kết quả:\n${JSON.stringify(value, null, 2)}\n`);
 }
 
-function makeClient(credentials, clientFactory) {
+function makeClient(credentials, clientFactory, fetchImpl) {
   const hasClientCredentials = Boolean(credentials.clientId && credentials.clientSecret);
   const hasPasswordCredentials = Boolean(credentials.username && credentials.password);
   if (!hasClientCredentials && !hasPasswordCredentials) {
@@ -82,6 +83,7 @@ function makeClient(credentials, clientFactory) {
           ...(credentials.clientSecret ? { clientSecret: credentials.clientSecret } : {}),
         }),
     baseUrl: credentials.baseUrl,
+    fetch: withClientSecret(fetchImpl, credentials.clientSecret),
   });
 }
 
@@ -102,7 +104,7 @@ async function login(flags, context) {
         clientSecret,
         baseUrl: flags['base-url'] || context.env.MONAPAY_BASE_URL || current.baseUrl,
       };
-      const client = makeClient(credentials, context.clientFactory);
+      const client = makeClient(credentials, context.clientFactory, context.fetch);
       const profile = await client.me();
       const path = await writeCredentials(credentials, { env: context.env });
       print({ message: 'Xác thực thành công.', name: profile?.name, username: profile?.username, credentials: path }, {
@@ -128,7 +130,7 @@ async function login(flags, context) {
       ...(clientSecret ? { clientSecret } : {}),
       baseUrl: flags['base-url'] || context.env.MONAPAY_BASE_URL || current.baseUrl,
     };
-    const client = makeClient(credentials, context.clientFactory);
+    const client = makeClient(credentials, context.clientFactory, context.fetch);
     const profile = await client.me();
     const path = await writeCredentials(credentials, { env: context.env });
     print({ message: 'Đăng nhập thành công.', username: profile?.username || username, credentials: path }, {
@@ -256,6 +258,7 @@ export async function main(argv, dependencies = {}) {
     env: dependencies.env || process.env,
     input: dependencies.input || process.stdin,
     stdout: dependencies.stdout || process.stdout,
+    fetch: dependencies.fetch || globalThis.fetch,
     clientFactory: dependencies.clientFactory || ((options) => new MonaPay(options)),
   };
   const { positionals, flags } = parseArgs(argv);
@@ -283,7 +286,7 @@ export async function main(argv, dependencies = {}) {
   }
 
   const credentials = await readCredentials({ env: context.env });
-  const client = makeClient(credentials, context.clientFactory);
+  const client = makeClient(credentials, context.clientFactory, context.fetch);
   let result;
   if (command === 'me') result = await client.me();
   else if (command === 'keys') result = await runKeys(client, action, flags, positionals, context);

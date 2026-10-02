@@ -14,7 +14,9 @@ monapay login --client-id "$MONAPAY_CLIENT_ID" --client-secret "$MONAPAY_CLIENT_
 monapay me
 ```
 
-`login` ưu tiên `--client-id`, `--client-secret` hoặc `MONAPAY_CLIENT_ID`, `MONAPAY_CLIENT_SECRET`; CLI đổi cặp này thành OAuth token và tự cache token theo hạn dùng. Giá trị còn thiếu sẽ được hỏi tương tác. Credentials nằm tại `~/.config/monapay/credentials.json`, thư mục có mode `700` và file có mode `600`. Có thể đổi thư mục bằng `MONAPAY_CONFIG_DIR`.
+`login` ưu tiên `--client-id`, `--client-secret` hoặc `MONAPAY_CLIENT_ID`, `MONAPAY_CLIENT_SECRET`; CLI đổi cặp này thành OAuth token và tự cache token theo hạn dùng. Giá trị còn thiếu sẽ được hỏi tương tác. Credentials (bao gồm `clientSecret`) nằm tại `~/.config/monapay/credentials.json`, thư mục có mode `700` và file có mode `600`. Có thể đổi thư mục bằng `MONAPAY_CONFIG_DIR`.
+
+Với mọi request ghi (`POST`, `PUT`, `PATCH`, `DELETE`) đã có Bearer token, CLI tự gửi `X-Client-Secret`. Secret lấy từ `MONAPAY_CLIENT_SECRET` trước, nếu không có mới dùng credentials đã lưu; request `GET` và các bước đăng nhập/2FA không nhận header này. CLI không in client secret khi đăng nhập. Nếu API báo `Missing Client Secret` hoặc `Invalid Client Secret`, chạy lại `monapay login --client-id ... --client-secret ...` hoặc đặt `MONAPAY_CLIENT_SECRET`.
 
 Cách cũ `--username`, `--password` hoặc `MONAPAY_USERNAME`, `MONAPAY_PASSWORD` vẫn hoạt động. Nên dùng client credentials vì tài khoản bật 2FA không login bằng mật khẩu được.
 

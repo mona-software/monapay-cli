@@ -12,14 +12,19 @@ test('credentials được lưu mode 600 và env ghi đè file', async (context)
   const directory = await mkdtemp(join(tmpdir(), 'monapay-credentials-'));
   context.after(() => rm(directory, { recursive: true, force: true }));
   const env = { MONAPAY_CONFIG_DIR: directory };
-  const path = await writeCredentials({ username: 'stored', password: 'secret', baseUrl: 'https://example.test' }, { env });
+  const path = await writeCredentials({
+    username: 'stored', password: 'secret', clientSecret: 'stored-client-secret', baseUrl: 'https://example.test',
+  }, { env });
   assert.equal((await stat(path)).mode & 0o777, 0o600);
   assert.deepEqual(JSON.parse(await readFile(path, 'utf8')), {
-    username: 'stored', password: 'secret', baseUrl: 'https://example.test',
+    username: 'stored', password: 'secret', clientSecret: 'stored-client-secret', baseUrl: 'https://example.test',
   });
-  const loaded = await readCredentials({ env: { ...env, MONAPAY_USERNAME: 'from-env' } });
+  const loaded = await readCredentials({
+    env: { ...env, MONAPAY_USERNAME: 'from-env', MONAPAY_CLIENT_SECRET: 'env-client-secret' },
+  });
   assert.equal(loaded.username, 'from-env');
   assert.equal(loaded.password, 'secret');
+  assert.equal(loaded.clientSecret, 'env-client-secret');
 });
 
 test('login ưu tiên và lưu client credentials', async (context) => {
