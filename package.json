@@ -1,7 +1,7 @@
 {
   "name": "@monapay/cli",
-  "version": "0.2.1",
-  "description": "CLI zero-dependency cho MONA Pay",
+  "version": "0.2.2",
+  "description": "CLI cho MONA Pay, không dùng dependency bên thứ ba",
   "type": "module",
   "main": "./index.js",
   "bin": {
@@ -30,7 +30,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/themonagroup/monapay-cli.git"
+    "url": "git+https://github.com/mona-software/monapay-cli.git"
   },
-  "homepage": "https://monapay.vn/docs"
+  "homepage": "https://monapay.vn/docs",
+  "dependencies": {
+    "@monapay/node": "^0.5.1"
+  },
+  "author": "MONA Software"
 }

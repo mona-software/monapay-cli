@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { verifyWebhook } from '../../sdk/node/dist/index.js';
+import { verifyWebhook } from '@monapay/node';
 
 const REASONS = {
   missing_timestamp: 'thiếu X-Mona-Timestamp',

@@ -3,14 +3,14 @@ import { Writable } from 'node:stream';
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-import { MonaPay } from '../../sdk/node/dist/index.js';
+import { MonaPay } from '@monapay/node';
 import { withClientSecret } from './api-fetch.js';
 import { integerFlag, parseArgs, required } from './args.js';
 import { readCredentials, writeCredentials } from './credentials.js';
 import { qrPng } from './qrcode.js';
 import { listenForWebhooks } from './webhook-listener.js';
 
-const HELP = `MONA Pay CLI 0.2.1
+const HELP = `MONA Pay CLI 0.2.2
 
 Cách dùng:
   monapay login [--client-id ID] [--client-secret SECRET]

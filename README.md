@@ -2,7 +2,7 @@
 
 MONA Pay là API ngân hàng và dịch vụ xác nhận thanh toán tự động của The MONA Group, giúp doanh nghiệp Việt Nam nhận và xác nhận tiền chuyển khoản theo thời gian thực qua tài khoản ảo (VA), VietQR, webhook và Telegram — thiết kế để cả lập trình viên lẫn AI agent tích hợp trong vài phút.
 
-CLI chạy trên Node.js 18 trở lên, không dùng dependency bên thứ ba và dùng trực tiếp SDK Node trong monorepo. MONA Pay miễn phí hoàn toàn.
+CLI chạy trên Node.js 18 trở lên, không dùng dependency bên thứ ba và dùng SDK Node chính thức `@monapay/node`. MONA Pay miễn phí hoàn toàn.
 
 ## Chạy trong 2 phút
 
@@ -95,3 +95,5 @@ find cli -type f -name '*.js' -print0 | xargs -0 -n1 node --check
 Tài liệu: https://monapay.vn/docs · AI/LLM: https://monapay.vn/llms.txt · Hotline 1900 636 648 · info@themona.global
 
 License MIT.
+
+**MONA Pay thuộc bộ MONA Cloud của The MONA Group.**
